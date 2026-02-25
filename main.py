@@ -5,6 +5,7 @@ import random
 
 from controls import move_player, move_player_with_joystick
 from classes.constants import WIDTH, HEIGHT, FPS, SHOOT_DELAY
+from classes import sound
 from functions import show_game_over, music_background
 from menu import show_menu
 
@@ -107,6 +108,8 @@ black_hole_imgs = [
 ]
 
 initial_player_pos = (WIDTH // 2, HEIGHT - 100)
+
+warning_sound = sound.load_sound('game_sounds/warning.mp3')
 
 score = 0
 hi_score = 0
@@ -267,7 +270,7 @@ while running:
         enemy2_group.add(enemy2_object)
 
     if score >= 5000 and not boss1_spawned:
-        pygame.mixer.Sound('game_sounds/warning.mp3').play()
+        warning_sound.play()
         boss1_img = boss1_img
         boss1_object = Boss1(
             random.randint(200, WIDTH - 100),
@@ -278,7 +281,7 @@ while running:
         boss1_spawned = True
 
     if score >= 10000 and not boss2_spawned:
-        pygame.mixer.Sound('game_sounds/warning.mp3').play()
+        warning_sound.play()
         boss2_img = boss2_img
         boss2_object = Boss2(
             random.randint(200, WIDTH - 100),
@@ -289,7 +292,7 @@ while running:
         boss2_spawned = True
 
     if score >= 15000 and not boss3_spawned:
-        pygame.mixer.Sound('game_sounds/warning.mp3').play()
+        warning_sound.play()
         boss3_img = boss3_img
         boss3_object = Boss3(
             random.randint(200, WIDTH - 100),
@@ -812,6 +815,6 @@ while running:
 
     clock.tick(FPS)
 
-pygame.mixer.music.stop()
+sound.stop_music()
 pygame.quit()
 sys.exit()

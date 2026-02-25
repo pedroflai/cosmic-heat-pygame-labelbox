@@ -2,9 +2,9 @@ import sys
 import random
 
 import pygame
-import pygame.mixer
 
 from classes.constants import WIDTH, HEIGHT, BLACK, WHITE, RED
+from classes import sound
 
 
 def animate_screen():
@@ -17,15 +17,12 @@ def animate_screen():
         pygame.time.wait(10)
 
 
-pygame.mixer.init()
+sound.init_audio()
 pygame.init()
-pygame.mixer.music.load('game_sounds/menu.mp3')
-pygame.mixer.music.set_volume(0.25)
-pygame.mixer.music.play(-1)
-pygame.mixer.set_num_channels(20)
-for i in range(20):
-    channel = pygame.mixer.Channel(i)
-    channel.set_volume(0.25)
+sound.load_music('game_sounds/menu.mp3')
+sound.set_music_volume(0.25)
+sound.play_music(-1)
+sound.set_num_channels(20)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Main Menu")
@@ -41,9 +38,9 @@ logo_y = 50
 play_button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 - 25, 205, 50)
 quit_button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 50, 205, 50)
 
-pygame.mixer.music.load('game_sounds/menu.mp3')
-pygame.mixer.music.play(-1)
-explosion_sound = pygame.mixer.Sound('game_sounds/explosions/explosion1.wav')
+sound.load_music('game_sounds/menu.mp3')
+sound.play_music(-1)
+explosion_sound = sound.load_sound('game_sounds/explosions/explosion1.wav')
 explosion_sound.set_volume(0.25)
 selected_button = 0
 show_menu = True

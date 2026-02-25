@@ -1,13 +1,14 @@
 import pygame
 from classes.constants import WIDTH, HEIGHT
+from classes import sound
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 
 def music_background():
-    pygame.mixer.music.load('game_sounds/background_music.mp3')
-    pygame.mixer.music.set_volume(0.25)
-    pygame.mixer.music.play(loops=-1)
+    sound.load_music('game_sounds/background_music.mp3')
+    sound.set_music_volume(0.25)
+    sound.play_music(loops=-1)
 
 
 def show_game_over(score):
@@ -20,8 +21,8 @@ def show_game_over(score):
     screen.blit(text, text_rect)
     screen.blit(score_text, score_rect)
     pygame.display.flip()
-    pygame.mixer.music.load('game_sounds/gameover.mp3')
-    pygame.mixer.music.play()
+    sound.load_music('game_sounds/gameover.mp3')
+    sound.play_music()
     pygame.time.delay(4000)
     music_background()
 
@@ -32,7 +33,7 @@ def show_game_win():
     text_rect = text.get_rect(center=(WIDTH/2, HEIGHT/2))
     screen.blit(text, text_rect)
     pygame.display.flip()
-    pygame.mixer.music.load('game_sounds/win.mp3')
-    pygame.mixer.music.play()
+    sound.load_music('game_sounds/win.mp3')
+    sound.play_music()
     pygame.time.delay(1000)
     music_background()

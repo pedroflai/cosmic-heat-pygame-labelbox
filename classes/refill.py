@@ -2,6 +2,7 @@ import pygame
 import random
 
 from .constants import WIDTH, HEIGHT
+from . import sound
 
 
 class BulletRefill(pygame.sprite.Sprite):
@@ -15,7 +16,7 @@ class BulletRefill(pygame.sprite.Sprite):
         self.speed = 1
         self.direction_x = random.choice([-2, 2])
         self.direction_y = random.choice([-2, 2])
-        self.sound_effect = pygame.mixer.Sound("game_sounds/refill/bullet_refill.wav")
+        self.sound_effect = sound.load_sound("game_sounds/refill/bullet_refill.wav")
         self.sound_effect.set_volume(0.4)
 
     def update(self):
@@ -44,7 +45,7 @@ class HealthRefill(pygame.sprite.Sprite):
         self.speed = 1
         self.direction_x = random.choice([-2, 2])
         self.direction_y = random.choice([-2, 2])
-        self.sound_effect = pygame.mixer.Sound("game_sounds/refill/health_refill.wav")
+        self.sound_effect = sound.load_sound("game_sounds/refill/health_refill.wav")
         self.sound_effect.set_volume(0.4)
 
     def update(self):
@@ -73,7 +74,7 @@ class DoubleRefill(pygame.sprite.Sprite):
         self.speed = 2
         self.direction_x = random.choice([-2, 2])
         self.direction_y = random.choice([-2, 2])
-        self.sound_effect = pygame.mixer.Sound("game_sounds/refill/double_refill.mp3")
+        self.sound_effect = sound.load_sound("game_sounds/refill/double_refill.mp3")
         self.sound_effect.set_volume(0.4)
 
     def update(self):
@@ -103,7 +104,7 @@ class ExtraScore(pygame.sprite.Sprite):
         self.rect.y = y
         self.direction_x = 0
         self.direction_y = 1
-        self.sound_effect = pygame.mixer.Sound("game_sounds/refill/extra_score.mp3")
+        self.sound_effect = sound.load_sound("game_sounds/refill/extra_score.mp3")
         self.sound_effect.set_volume(0.4)
 
     def update(self):

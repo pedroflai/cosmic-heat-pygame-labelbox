@@ -1,6 +1,7 @@
 import pygame
 
 from .constants import WIDTH, HEIGHT
+from . import sound
 
 
 class Meteors(pygame.sprite.Sprite):
@@ -72,7 +73,7 @@ class BlackHole(pygame.sprite.Sprite):
         self.direction_y = 1
         self.angle = 0
         self.speed = 2
-        self.sound_effect = pygame.mixer.Sound("game_sounds/damage/black_hole.mp3")
+        self.sound_effect = sound.load_sound("game_sounds/damage/black_hole.mp3")
 
     def update(self):
         self.rect.y += self.speed * self.direction_y

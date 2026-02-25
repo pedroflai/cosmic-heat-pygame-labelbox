@@ -1,4 +1,5 @@
 import pygame
+from . import sound
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -10,7 +11,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.bottom = y - 10
         self.speed = 10
-        self.shoot_sound = pygame.mixer.Sound('game_sounds/shooting/shoot.mp3')
+        self.shoot_sound = sound.load_sound('game_sounds/shooting/shoot.mp3')
         self.shoot_sound.set_volume(0.4)
         self.shoot_sound.play()
 

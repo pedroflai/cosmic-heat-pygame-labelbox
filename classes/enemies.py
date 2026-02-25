@@ -2,6 +2,7 @@ import pygame
 import random
 
 from .constants import WIDTH, HEIGHT, ENEMY_FORCE
+from . import sound
 
 
 class Enemy1(pygame.sprite.Sprite):
@@ -130,7 +131,7 @@ class Enemy2Bullet(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.bottom = y + 10
         self.speed = 8
-        self.shoot_sound = pygame.mixer.Sound('game_sounds/shooting/shoot2.mp3')
+        self.shoot_sound = sound.load_sound('game_sounds/shooting/shoot2.mp3')
         self.shoot_sound.set_volume(0.3)
         self.shoot_sound.play()
 

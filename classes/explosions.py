@@ -1,5 +1,6 @@
 import pygame
 import random
+from . import sound
 
 
 class Explosion(pygame.sprite.Sprite):
@@ -14,12 +15,12 @@ class Explosion(pygame.sprite.Sprite):
         self.last_update = pygame.time.get_ticks()
         self.frame_rate = 60
         self.explosion_sounds = [
-            pygame.mixer.Sound('game_sounds/explosions/explosion1.wav'),
-            pygame.mixer.Sound('game_sounds/explosions/explosion2.wav'),
-            pygame.mixer.Sound('game_sounds/explosions/explosion3.wav')
+            sound.load_sound('game_sounds/explosions/explosion1.wav'),
+            sound.load_sound('game_sounds/explosions/explosion2.wav'),
+            sound.load_sound('game_sounds/explosions/explosion3.wav')
         ]
-        for sound in self.explosion_sounds:
-            sound.set_volume(0.3)
+        for snd in self.explosion_sounds:
+            snd.set_volume(0.3)
         self.explosion_sound = random.choice(self.explosion_sounds)
         self.sound_played = False
 
@@ -52,10 +53,10 @@ class Explosion2(pygame.sprite.Sprite):
         self.last_update = pygame.time.get_ticks()
         self.frame_rate = 60
         self.explosion2_sounds = [
-            pygame.mixer.Sound('game_sounds/explosions/explosion3.wav')
+            sound.load_sound('game_sounds/explosions/explosion3.wav')
         ]
-        for sound in self.explosion2_sounds:
-            sound.set_volume(0.3)
+        for snd in self.explosion2_sounds:
+            snd.set_volume(0.3)
         self.explosion2_sound = random.choice(self.explosion2_sounds)
         self.sound_played = False
 

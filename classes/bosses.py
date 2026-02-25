@@ -3,6 +3,7 @@ import random
 import math
 
 from .constants import WIDTH, HEIGHT
+from . import sound
 
 
 class Boss1(pygame.sprite.Sprite):
@@ -58,7 +59,7 @@ class Boss1Bullet(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.bottom = y + 10
         self.speed = 10
-        self.shoot_sound = pygame.mixer.Sound('game_sounds/shooting/boss1shoot.mp3')
+        self.shoot_sound = sound.load_sound('game_sounds/shooting/boss1shoot.mp3')
         self.shoot_sound.set_volume(0.4)
         self.shoot_sound.play()
 
@@ -150,7 +151,7 @@ class Boss2Bullet(pygame.sprite.Sprite):
         self.rect.bottom = y + 10
         self.speed = 11
         self.direction = direction
-        self.shoot_sound = pygame.mixer.Sound('game_sounds/shooting/boss2shoot.mp3')
+        self.shoot_sound = sound.load_sound('game_sounds/shooting/boss2shoot.mp3')
         self.shoot_sound.set_volume(0.4)
         self.shoot_sound.play()
 
@@ -256,7 +257,7 @@ class Boss3Bullet(pygame.sprite.Sprite):
         self.rect.bottom = y + 10
         self.speed = 15
         self.direction = direction
-        self.shoot_sound = pygame.mixer.Sound('game_sounds/shooting/boss2shoot.mp3')
+        self.shoot_sound = sound.load_sound('game_sounds/shooting/boss2shoot.mp3')
         self.shoot_sound.set_volume(0.4)
         self.shoot_sound.play()
 
