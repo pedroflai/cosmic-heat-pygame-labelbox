@@ -1,12 +1,22 @@
-import pygame
-import random
+"""Boss sprite classes."""
 import math
+import random
+
+import pygame
 
 from .constants import WIDTH, HEIGHT
-from . import sound
+from .bullets import Boss1Bullet, Boss2Bullet, Boss3Bullet
 
 
 class Boss1(pygame.sprite.Sprite):
+    """First boss — moves side to side, fires triple bullets."""
+
+    # combat attributes (read by collisions.py)
+    contact_damage = 20
+    hp_per_bullet = 5
+    score_on_kill = 400
+    bullet_damage = 20
+    drop_chance = 20   # 1-in-N for double refill
 
     def __init__(self, x, y, image):
         super().__init__()
@@ -50,34 +60,23 @@ class Boss1(pygame.sprite.Sprite):
             self.rect.y += direction.y * self.speed
 
 
-class Boss1Bullet(pygame.sprite.Sprite):
-
-    def __init__(self, x, y):
-        super().__init__()
-        self.image = pygame.image.load('images/bullets/bulletboss1.png').convert_alpha()
-        self.rect = self.image.get_rect()
-        self.rect.centerx = x
-        self.rect.bottom = y + 10
-        self.speed = 10
-        self.shoot_sound = sound.load_sound('game_sounds/shooting/boss1shoot.mp3')
-        self.shoot_sound.set_volume(0.4)
-        self.shoot_sound.play()
-
-    def update(self):
-        self.rect.move_ip(0, self.speed)
-
-        if self.rect.top > HEIGHT:
-            self.kill()
-
-
 class Boss2(pygame.sprite.Sprite):
+    """Second boss — 8-directional movement, homing bullets."""
+
+    # combat attributes
+    contact_damage = 2
+    hp_per_bullet = 8
+    score_on_kill = 800
+    bullet_damage = 20
+    drop_chance = 20
 
     def __init__(self, x, y, image):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect(center=(x, y))
         self.speed = 5
-        self.direction = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, -1), (-1, 1), (1, 1)])
+        self.direction = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1),
+                                         (-1, -1), (1, -1), (-1, 1), (1, 1)])
         self.direction_x, self.direction_y = self.direction
         self.shoot_timer = 0
         self.shots_fired = 0
@@ -140,42 +139,23 @@ class Boss2(pygame.sprite.Sprite):
             self.direction = (self.direction_x, self.direction_y)
 
 
-class Boss2Bullet(pygame.sprite.Sprite):
-
-    def __init__(self, x, y, direction):
-        super().__init__()
-        self.image_orig = pygame.image.load('images/bullets/bulletboss2.png').convert_alpha()
-        self.image = self.image_orig
-        self.rect = self.image.get_rect()
-        self.rect.centerx = x
-        self.rect.bottom = y + 10
-        self.speed = 11
-        self.direction = direction
-        self.shoot_sound = sound.load_sound('game_sounds/shooting/boss2shoot.mp3')
-        self.shoot_sound.set_volume(0.4)
-        self.shoot_sound.play()
-
-    def update(self):
-        self.rect.move_ip(self.direction.x * self.speed, self.direction.y * self.speed)
-
-        angle = math.atan2(self.direction.y, self.direction.x)
-        angle = math.degrees(angle)
-
-        self.image = pygame.transform.rotate(self.image_orig, -angle)
-        self.rect = self.image.get_rect(center=self.rect.center)
-
-        if self.rect.top > HEIGHT:
-            self.kill()
-
-
 class Boss3(pygame.sprite.Sprite):
+    """Third boss — teleports, homing bullets, 8-directional movement."""
+
+    # combat attributes
+    contact_damage = 1
+    hp_per_bullet = 6
+    score_on_kill = 1000
+    bullet_damage = 20
+    drop_chance = 20
 
     def __init__(self, x, y, image):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect(center=(x, y))
         self.speed = 5
-        self.direction = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (1, -1), (-1, 1), (1, 1)])
+        self.direction = random.choice([(-1, 0), (1, 0), (0, -1), (0, 1),
+                                         (-1, -1), (1, -1), (-1, 1), (1, 1)])
         self.direction_x, self.direction_y = self.direction
         self.shoot_timer = 0
         self.shots_fired = 0
@@ -244,31 +224,3 @@ class Boss3(pygame.sprite.Sprite):
             self.rect.centerx = random.randint(50, WIDTH - 50)
             self.rect.centery = random.randint(100, HEIGHT - 100)
             self.teleport_timer = 0
-
-
-class Boss3Bullet(pygame.sprite.Sprite):
-
-    def __init__(self, x, y, direction):
-        super().__init__()
-        self.image_orig = pygame.image.load('images/bullets/bulletboss3.png').convert_alpha()
-        self.image = self.image_orig
-        self.rect = self.image.get_rect()
-        self.rect.centerx = x
-        self.rect.bottom = y + 10
-        self.speed = 15
-        self.direction = direction
-        self.shoot_sound = sound.load_sound('game_sounds/shooting/boss2shoot.mp3')
-        self.shoot_sound.set_volume(0.4)
-        self.shoot_sound.play()
-
-    def update(self):
-        self.rect.move_ip(self.direction.x * self.speed, self.direction.y * self.speed)
-
-        angle = math.atan2(self.direction.y, self.direction.x)
-        angle = math.degrees(angle)
-
-        self.image = pygame.transform.rotate(self.image_orig, -angle)
-        self.rect = self.image.get_rect(center=self.rect.center)
-
-        if self.rect.top > HEIGHT:
-            self.kill()

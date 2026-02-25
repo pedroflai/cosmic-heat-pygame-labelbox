@@ -1,11 +1,20 @@
+"""Enemy sprite classes (non-boss)."""
 import pygame
 import random
 
 from .constants import WIDTH, HEIGHT, ENEMY_FORCE
-from . import sound
+from .bullets import Enemy2Bullet
 
 
 class Enemy1(pygame.sprite.Sprite):
+    """Basic bouncing enemy ship."""
+
+    # combat attributes (read by collisions.py)
+    contact_damage = 10
+    score_on_contact = 20
+    score_on_kill = 50
+    drop_chance_bullet = 8   # 1-in-N
+    drop_chance_health = 8
 
     def __init__(self, x, y, image):
         super().__init__()
@@ -59,6 +68,14 @@ class Enemy1(pygame.sprite.Sprite):
 
 
 class Enemy2(pygame.sprite.Sprite):
+    """Shooting enemy that charges at the player after exhausting ammo."""
+
+    # combat attributes
+    contact_damage = 40
+    score_on_contact = 20
+    score_on_kill = 80
+    drop_chance = 20          # 1-in-N for double refill
+    bullet_damage = 10
 
     def __init__(self, x, y, image):
         super().__init__()
@@ -120,23 +137,3 @@ class Enemy2(pygame.sprite.Sprite):
 
             self.rect.x += direction.x * self.speed
             self.rect.y += direction.y * self.speed
-
-
-class Enemy2Bullet(pygame.sprite.Sprite):
-
-    def __init__(self, x, y):
-        super().__init__()
-        self.image = pygame.image.load('images/bullets/bullet4.png').convert_alpha()
-        self.rect = self.image.get_rect()
-        self.rect.centerx = x
-        self.rect.bottom = y + 10
-        self.speed = 8
-        self.shoot_sound = sound.load_sound('game_sounds/shooting/shoot2.mp3')
-        self.shoot_sound.set_volume(0.3)
-        self.shoot_sound.play()
-
-    def update(self):
-        self.rect.move_ip(0, self.speed)
-
-        if self.rect.top > HEIGHT:
-            self.kill()

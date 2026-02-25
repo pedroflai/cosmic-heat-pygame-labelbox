@@ -12,63 +12,19 @@ class Player:
         self.original_image = self.image.copy()
         self.direction = 'down'
 
-    def move_left(self):
-        if self.rect.left > 0:
-            self.rect.x -= self.speed
-            self.direction = 'left'
-            self.image = pygame.transform.flip(self.original_image, True, False)
+    def move(self, x_input, y_input):
+        """Move the player by (x_input, y_input) scaled by speed.
 
-    def move_right(self):
-        if self.rect.right < WIDTH:
-            self.rect.x += self.speed
-            self.direction = 'right'
-            self.image = self.original_image
-
-    def move_up(self):
-        if self.rect.top > 0:
-            self.rect.y -= self.speed
-            self.direction = 'up'
-
-    def move_down(self):
-        if self.rect.bottom < HEIGHT:
-            self.rect.y += self.speed
-            self.direction = 'down'
-
-    def move_up_left(self):
-        if self.rect.top > 0 and self.rect.left > 0:
-            self.rect.x -= self.speed
-            self.rect.y -= self.speed
-            self.direction = 'up_left'
-
-    def move_up_right(self):
-        if self.rect.top > 0 and self.rect.right < WIDTH:
-            self.rect.x += self.speed
-            self.rect.y -= self.speed
-            self.direction = 'up_right'
-
-    def move_down_left(self):
-        if self.rect.bottom < HEIGHT and self.rect.left > 0:
-            self.rect.x -= self.speed
-            self.rect.y += self.speed
-            self.direction = 'down_left'
-
-    def move_down_right(self):
-        if self.rect.bottom < HEIGHT and self.rect.right < WIDTH:
-            self.rect.x += self.speed
-            self.rect.y += self.speed
-            self.direction = 'down_right'
-
-    def stop(self):
-        pass
-
-    def stop_left(self):
-        pass
-
-    def stop_right(self):
-        pass
-
-    def stop_up(self):
-        pass
-
-    def stop_down(self):
-        pass
+        x_input / y_input are -1..+1 (keyboard) or floats from a joystick.
+        Handles screen-edge clamping and left/right sprite flip.
+        """
+        if x_input:
+            self.rect.x = max(0, min(WIDTH - self.rect.width,
+                                     self.rect.x + int(x_input * self.speed)))
+            if x_input < 0:
+                self.image = pygame.transform.flip(self.original_image, True, False)
+            else:
+                self.image = self.original_image
+        if y_input:
+            self.rect.y = max(0, min(HEIGHT - self.rect.height,
+                                     self.rect.y + int(y_input * self.speed)))

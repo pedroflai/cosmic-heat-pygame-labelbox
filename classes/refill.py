@@ -7,6 +7,10 @@ from . import sound
 
 class BulletRefill(pygame.sprite.Sprite):
 
+    health_restore = 0
+    ammo_restore = 50
+    score_bonus = 0
+
     def __init__(self, x, y, image):
         super().__init__()
         self.image = image
@@ -35,6 +39,10 @@ class BulletRefill(pygame.sprite.Sprite):
 
 
 class HealthRefill(pygame.sprite.Sprite):
+
+    health_restore = 50
+    ammo_restore = 0
+    score_bonus = 0
 
     def __init__(self, x, y, image):
         super().__init__()
@@ -65,6 +73,10 @@ class HealthRefill(pygame.sprite.Sprite):
 
 class DoubleRefill(pygame.sprite.Sprite):
 
+    health_restore = 50
+    ammo_restore = 50
+    score_bonus = 0
+
     def __init__(self, x, y, image):
         super().__init__()
         self.image = image
@@ -93,6 +105,10 @@ class DoubleRefill(pygame.sprite.Sprite):
 
 
 class ExtraScore(pygame.sprite.Sprite):
+
+    health_restore = 0
+    ammo_restore = 0
+    score_bonus = 20
 
     def __init__(self, x, y, image):
         super().__init__()

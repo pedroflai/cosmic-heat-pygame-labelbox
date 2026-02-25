@@ -6,6 +6,12 @@ from . import sound
 
 class Meteors(pygame.sprite.Sprite):
 
+    # combat attributes
+    contact_damage = 10
+    score_on_contact = 50
+    score_on_kill = 80
+    drop_chance = 10   # 1-in-N for double refill
+
     def __init__(self, x, y, image):
         super().__init__()
         self.original_image = image
@@ -33,6 +39,12 @@ class Meteors(pygame.sprite.Sprite):
 
 
 class Meteors2(pygame.sprite.Sprite):
+
+    # combat attributes
+    contact_damage = 10
+    score_on_contact = 20
+    score_on_kill = 40
+    drop_chance = 20
 
     def __init__(self, x, y, image):
         super().__init__()

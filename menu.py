@@ -4,8 +4,9 @@ import random
 import pygame
 
 from classes.constants import WIDTH, HEIGHT, BLACK, WHITE, RED
-from classes.display import init_display, get_screen
+from classes.display import get_screen
 from classes import sound
+from classes.assets import get_assets
 
 
 def animate_screen():
@@ -19,29 +20,26 @@ def animate_screen():
         pygame.time.wait(10)
 
 
-sound.init_audio()
-screen = init_display()
+# Use pre-loaded assets (loaded in main.py before this module is imported)
+_assets = get_assets()
+mainmenu_img = _assets.menu['background']
+logo_img = _assets.menu['logo']
+explosion_sound = _assets.sounds['menu_explosion']
+
+screen = get_screen()
+
 sound.load_music('game_sounds/menu.mp3')
 sound.set_music_volume(0.25)
 sound.play_music(-1)
-sound.set_num_channels(20)
 
 clock = pygame.time.Clock()
 
-mainmenu_img = pygame.image.load('images/mainmenu.jpg').convert()
-mainmenu_img = pygame.transform.scale(mainmenu_img, (WIDTH, HEIGHT))
-
-logo_img = pygame.image.load('images/ch.png').convert_alpha()
 logo_x = (WIDTH - logo_img.get_width()) // 2
 logo_y = 50
 
 play_button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 - 25, 205, 50)
 quit_button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 50, 205, 50)
 
-sound.load_music('game_sounds/menu.mp3')
-sound.play_music(-1)
-explosion_sound = sound.load_sound('game_sounds/explosions/explosion1.wav')
-explosion_sound.set_volume(0.25)
 selected_button = 0
 show_menu = True
 
@@ -68,8 +66,8 @@ def main():
                     explosion_sound.play()
                     animate_screen()
                     show_menu = False
-                    import main as game_main
-                    game_main.main()
+                    import gameplay
+                    gameplay.main()
                     return
                 elif quit_button_rect.collidepoint(x, y):
                     pygame.quit()
@@ -86,8 +84,8 @@ def main():
                         animate_screen()
                         show_menu = False
                         screen.fill(BLACK)
-                        import main as game_main
-                        game_main.main()
+                        import gameplay
+                        gameplay.main()
                         return
                     elif selected_button == 1:
                         pygame.quit()
@@ -101,8 +99,8 @@ def main():
                             animate_screen()
                             show_menu = False
                             screen.fill(BLACK)
-                            import main as game_main
-                            game_main.main()
+                            import gameplay
+                            gameplay.main()
                             return
                         elif selected_button == 1:
                             pygame.quit()
