@@ -1,8 +1,7 @@
 import pygame
 from classes.constants import WIDTH, HEIGHT
+from classes.display import get_screen
 from classes import sound
-
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 
 def music_background():
@@ -12,6 +11,7 @@ def music_background():
 
 
 def show_game_over(score):
+    screen = get_screen()
     font = pygame.font.SysFont('Impact', 50)
     font_small = pygame.font.SysFont('Impact', 30)
     text = font.render("GAME OVER", True, (139, 0, 0))
@@ -28,6 +28,7 @@ def show_game_over(score):
 
 
 def show_game_win():
+    screen = get_screen()
     font = pygame.font.SysFont('Impact', 50)
     text = font.render("AWESOME! GO ON!", True, (255, 255, 255))
     text_rect = text.get_rect(center=(WIDTH/2, HEIGHT/2))
