@@ -42,6 +42,7 @@ meteor2_group = pygame.sprite.Group()
 extra_score_group = pygame.sprite.Group()
 black_hole_group = pygame.sprite.Group()
 enemy2_bullets = pygame.sprite.Group()
+teststupidvar = False
 
 boss1_bullets = pygame.sprite.Group()
 boss2_bullets = pygame.sprite.Group()
