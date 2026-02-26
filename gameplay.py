@@ -13,6 +13,7 @@ from classes.player import Player
 from classes.bullets import Bullet
 from classes.groups import GameGroups, State
 from classes.spawner import spawn_tick
+from classes.draw import BackgroundState, draw_background, draw_pause, draw_game_world
 from classes.collisions import (
     process_refills,
     process_black_holes,
@@ -40,12 +41,9 @@ def main():
     state = State.PLAYING
     running = True
 
-    # --- background scroll ---
+    # --- background ---
     bg_imgs = [assets.backgrounds[k] for k in ('bg1', 'bg2', 'bg3', 'bg4')]
-    bg_y = -HEIGHT
-    bg_current = bg_imgs[0]
-    bg_top = bg_imgs[0].copy()
-    bg_upgraded = False
+    bg = BackgroundState.create(bg_imgs)
 
     # --- input ---
     last_shot_time = 0
@@ -74,9 +72,7 @@ def main():
 
         # --- paused ---
         if state == State.PAUSED:
-            font = pygame.font.SysFont('Comic Sans MS', 40)
-            text = font.render("PAUSE", True, (255, 255, 255))
-            screen.blit(text, text.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+            draw_pause(screen)
             pygame.display.flip()
             clock.tick(FPS)
             continue
@@ -89,10 +85,7 @@ def main():
             player_life = 200
             bullet_counter = 200
             player.rect.topleft = initial_pos
-            bg_current = bg_imgs[0]
-            bg_top = bg_imgs[0].copy()
-            bg_upgraded = False
-            bg_y = -HEIGHT
+            bg.reset()
             state = State.PLAYING
             continue
 
@@ -107,26 +100,9 @@ def main():
             groups.bullets.add(Bullet(player.rect.centerx, player.rect.top))
             bullet_counter -= 1
 
-        # --- background scroll ---
-        bg_y += 2 if score > 3000 else 1
-        if bg_y >= 0:
-            bg_y = -HEIGHT
-
-        if score >= 15000:
-            bg_current = bg_imgs[3]
-        elif score >= 10000:
-            bg_current = bg_imgs[2]
-        elif score >= 3000 and not bg_upgraded:
-            bg_current = bg_imgs[1]
-            bg_upgraded = True
-        elif score == 0:
-            bg_current = bg_imgs[0]
-            bg_upgraded = False
-
-        bg_top = bg_current.copy()
-        screen.blit(bg_current, (0, bg_y))
-        top_rect = bg_top.get_rect(topleft=(0, bg_y + HEIGHT))
-        screen.blit(bg_top, top_rect)
+        # --- background ---
+        bg.update(score)
+        draw_background(screen, bg)
 
         if score > hi_score:
             hi_score = score
@@ -139,47 +115,32 @@ def main():
             state = State.GAME_OVER
             continue
 
-        # --- collisions & drawing ---
-        life_d, ammo_d, score_d = process_refills(groups, player, screen, score)
+        # --- collisions ---
+        life_d, ammo_d, score_d = process_refills(groups, player, score)
         player_life = min(200, player_life + life_d)
         bullet_counter = min(200, bullet_counter + ammo_d)
         score += score_d
 
-        player_life += process_black_holes(groups, player, screen, score)
+        player_life += process_black_holes(groups, player, score)
 
-        ld, sd = process_hazard_group(groups.meteors, groups, player, screen, assets, score)
+        ld, sd = process_hazard_group(groups.meteors, groups, player, assets, score)
         player_life += ld; score += sd
 
-        ld, sd = process_hazard_group(groups.meteors2, groups, player, screen, assets, score)
+        ld, sd = process_hazard_group(groups.meteors2, groups, player, assets, score)
         player_life += ld; score += sd
 
-        ld, sd = process_enemy1(groups, player, screen, assets)
+        ld, sd = process_enemy1(groups, player, assets)
         player_life += ld; score += sd
 
-        ld, sd = process_enemy2(groups, player, screen, assets)
+        ld, sd = process_enemy2(groups, player, assets)
         player_life += ld; score += sd
 
         for i in range(3):
-            ld, sd = process_boss(i, groups, player, screen, assets)
+            ld, sd = process_boss(i, groups, player, assets)
             player_life += ld; score += sd
 
-        # --- render: player, explosions, bullets ---
-        screen.blit(player.image.copy(), player.rect)
-
-        for expl in groups.explosions:
-            expl.update()
-            screen.blit(expl.image, expl.rect)
-
-        for expl in groups.explosions2:
-            expl.update()
-            screen.blit(expl.image, expl.rect)
-
-        for bullet in groups.bullets:
-            bullet.update()
-            screen.blit(bullet.image, bullet.rect)
-            if bullet.rect.bottom < 0:
-                bullet.kill()
-                bullet_counter -= 1
+        # --- render world ---
+        bullet_counter -= draw_game_world(screen, groups, player)
 
         # --- HUD ---
         draw_hud(screen, player_life, bullet_counter, score, hi_score,

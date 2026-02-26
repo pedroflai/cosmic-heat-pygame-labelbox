@@ -32,15 +32,14 @@ def _scale_speed(sprite, score):
 #  Refill / pickup processing
 # ---------------------------------------------------------------------------
 
-def process_refills(groups, player, screen, score):
-    """Update & draw all refills; return (life_delta, ammo_delta, score_delta)."""
+def process_refills(groups, player, score):
+    """Update all refills & check collisions; return (life_delta, ammo_delta, score_delta)."""
     life_d = ammo_d = score_d = 0
 
     for group in (groups.bullet_refill, groups.health_refill,
                   groups.double_refill, groups.extra_score):
         for sprite in group:
             sprite.update()
-            sprite.draw(screen)
 
             if player.rect.colliderect(sprite.rect):
                 if sprite.health_restore and life_d + 200 > 0:
@@ -61,12 +60,11 @@ def process_refills(groups, player, screen, score):
 #  Black holes
 # ---------------------------------------------------------------------------
 
-def process_black_holes(groups, player, screen, score):
-    """Update & draw black holes; return life_delta."""
+def process_black_holes(groups, player, score):
+    """Update black holes & check collisions; return life_delta."""
     life_d = 0
     for obj in groups.black_holes:
         obj.update()
-        obj.draw(screen)
         if obj.rect.colliderect(player.rect):
             life_d -= 1
             obj.sound_effect.play()
@@ -78,8 +76,8 @@ def process_black_holes(groups, player, screen, score):
 #  Meteors (type 1 & 2) — generic hazard with bullet-killable sprites
 # ---------------------------------------------------------------------------
 
-def process_hazard_group(group, groups, player, screen, assets, score):
-    """Update, draw, and handle collisions for a meteor/hazard group.
+def process_hazard_group(group, groups, player, assets, score):
+    """Update & handle collisions for a meteor/hazard group.
 
     Each sprite in *group* must have class attrs:
         contact_damage, score_on_contact, score_on_kill, drop_chance
@@ -91,7 +89,6 @@ def process_hazard_group(group, groups, player, screen, assets, score):
 
     for obj in list(group):
         obj.update()
-        obj.draw(screen)
 
         # player collision → damage + explosion + kill
         if obj.rect.colliderect(player.rect):
@@ -121,8 +118,8 @@ def process_hazard_group(group, groups, player, screen, assets, score):
 #  Enemy1 — bouncing enemies (same pattern as hazards but different update)
 # ---------------------------------------------------------------------------
 
-def process_enemy1(groups, player, screen, assets):
-    """Update, draw, and process collisions for Enemy1 group.
+def process_enemy1(groups, player, assets):
+    """Update & process collisions for Enemy1 group.
 
     Returns (life_delta, score_delta).
     """
@@ -133,8 +130,6 @@ def process_enemy1(groups, player, screen, assets):
 
     for obj in list(groups.enemy1):
         obj.update(groups.enemy1)
-
-    groups.enemy1.draw(screen)
 
     for obj in list(groups.enemy1):
         if obj.rect.colliderect(player.rect):
@@ -167,7 +162,7 @@ def process_enemy1(groups, player, screen, assets):
 #  Enemy2 — shooting enemy
 # ---------------------------------------------------------------------------
 
-def process_enemy2(groups, player, screen, assets):
+def process_enemy2(groups, player, assets):
     """Update enemy2 + their bullets, handle collisions.
 
     Returns (life_delta, score_delta).
@@ -180,9 +175,7 @@ def process_enemy2(groups, player, screen, assets):
     for obj in list(groups.enemy2):
         obj.update(groups.enemy2, groups.enemy2_bullets, player)
 
-    groups.enemy2.draw(screen)
     groups.enemy2_bullets.update()
-    groups.enemy2_bullets.draw(screen)
 
     for obj in list(groups.enemy2):
         if obj.rect.colliderect(player.rect):
@@ -216,8 +209,8 @@ def process_enemy2(groups, player, screen, assets):
 #  Boss (generic for boss index 0/1/2)
 # ---------------------------------------------------------------------------
 
-def process_boss(idx, groups, player, screen, assets):
-    """Update boss[idx] + their bullets, handle collisions, draw health bar.
+def process_boss(idx, groups, player, assets):
+    """Update boss[idx] + their bullets, handle collisions.
 
     Returns (life_delta, score_delta).
     """
@@ -236,9 +229,7 @@ def process_boss(idx, groups, player, screen, assets):
     for obj in list(boss_group):
         obj.update(bullet_group, player)
 
-    boss_group.draw(screen)
     bullet_group.update()
-    bullet_group.draw(screen)
 
     for obj in list(boss_group):
         # contact damage (doesn't kill the boss)
@@ -273,14 +264,5 @@ def process_boss(idx, groups, player, screen, assets):
             life_d -= 20  # all bosses currently deal 20 bullet damage
             groups.explosions.add(Explosion(player.rect.center, expl3_imgs))
             bullet.kill()
-
-    # health bar
-    if boss_group:
-        obj = boss_group.sprites()[0]
-        bar = bstate.bar_rects[idx]
-        bar.center = (obj.rect.centerx, obj.rect.top - 5)
-        pygame.draw.rect(screen, (255, 0, 0), bar)
-        pygame.draw.rect(screen, (0, 255, 0),
-                         (bar.left, bar.top, max(0, bstate.health[idx]), bar.height))
 
     return life_d, score_d
