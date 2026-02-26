@@ -3,7 +3,7 @@ import sys
 
 import pygame
 
-from classes.controls import get_movement_input
+from classes import controls
 from classes.constants import WIDTH, HEIGHT, FPS, SHOOT_DELAY
 from classes.display import get_screen
 from classes import sound
@@ -48,11 +48,6 @@ def main():
     bg_upgraded = False
 
     # --- input ---
-    joystick = None
-    if pygame.joystick.get_count() > 0:
-        joystick = pygame.joystick.Joystick(0)
-        joystick.init()
-    is_shooting = False
     last_shot_time = 0
 
     initial_pos = (WIDTH // 2, HEIGHT - 100)
@@ -61,37 +56,21 @@ def main():
     while running:
 
         # --- events ---
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        controls.update(events)
+
+        for event in events:
             if event.type == pygame.QUIT:
                 running = False
 
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    running = False
-                elif event.key in (pygame.K_p, pygame.K_PAUSE):
-                    if state == State.PLAYING:
-                        state = State.PAUSED
-                    elif state == State.PAUSED:
-                        state = State.PLAYING
-                elif event.key == pygame.K_SPACE and state == State.PLAYING:
-                    is_shooting = True
+        if controls.action_pressed("quit"):
+            running = False
 
-            elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_SPACE:
-                    is_shooting = False
-
-            elif event.type == pygame.JOYBUTTONDOWN:
-                if event.button == 0 and state == State.PLAYING:
-                    is_shooting = True
-                elif event.button == 7:
-                    if state == State.PLAYING:
-                        state = State.PAUSED
-                    elif state == State.PAUSED:
-                        state = State.PLAYING
-
-            elif event.type == pygame.JOYBUTTONUP:
-                if event.button == 0:
-                    is_shooting = False
+        if controls.action_pressed("pause"):
+            if state == State.PLAYING:
+                state = State.PAUSED
+            elif state == State.PAUSED:
+                state = State.PLAYING
 
         # --- paused ---
         if state == State.PAUSED:
@@ -115,17 +94,15 @@ def main():
             bg_upgraded = False
             bg_y = -HEIGHT
             state = State.PLAYING
-            is_shooting = False
             continue
 
         # --- movement ---
-        keys = pygame.key.get_pressed()
-        x_in, y_in = get_movement_input(keys, joystick)
+        x_in, y_in = controls.get_movement()
         player.move(x_in, y_in)
 
         # --- auto-fire ---
         now = pygame.time.get_ticks()
-        if is_shooting and bullet_counter > 0 and now - last_shot_time > SHOOT_DELAY:
+        if controls.action_holding("shoot") and bullet_counter > 0 and now - last_shot_time > SHOOT_DELAY:
             last_shot_time = now
             groups.bullets.add(Bullet(player.rect.centerx, player.rect.top))
             bullet_counter -= 1

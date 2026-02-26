@@ -5,6 +5,7 @@ import pygame
 
 from classes.constants import WIDTH, HEIGHT, BLACK, WHITE, RED
 from classes.display import get_screen
+from classes import controls
 from classes import sound
 from classes.assets import get_assets
 
@@ -43,11 +44,6 @@ quit_button_rect = pygame.Rect(WIDTH // 2 - 100, HEIGHT // 2 + 50, 205, 50)
 selected_button = 0
 show_menu = True
 
-joystick = None
-if pygame.joystick.get_count() > 0:
-    joystick = pygame.joystick.Joystick(0)
-    joystick.init()
-
 
 def main():
     global show_menu, selected_button
@@ -55,7 +51,10 @@ def main():
     screen = get_screen()
 
     while show_menu:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+        controls.update(events)
+
+        for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -73,43 +72,23 @@ def main():
                     pygame.quit()
                     sys.exit()
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    selected_button = 0
-                elif event.key == pygame.K_DOWN:
-                    selected_button = 1
-                elif event.key == pygame.K_RETURN:
-                    if selected_button == 0:
-                        explosion_sound.play()
-                        animate_screen()
-                        show_menu = False
-                        screen.fill(BLACK)
-                        import gameplay
-                        gameplay.main()
-                        return
-                    elif selected_button == 1:
-                        pygame.quit()
-                        sys.exit()
+        if controls.action_pressed("up"):
+            selected_button = 0
+        elif controls.action_pressed("down"):
+            selected_button = 1
 
-            if joystick:
-                if event.type == pygame.JOYBUTTONDOWN:
-                    if event.button == 0:
-                        if selected_button == 0:
-                            explosion_sound.play()
-                            animate_screen()
-                            show_menu = False
-                            screen.fill(BLACK)
-                            import gameplay
-                            gameplay.main()
-                            return
-                        elif selected_button == 1:
-                            pygame.quit()
-                            sys.exit()
-                elif event.type == pygame.JOYHATMOTION:
-                    if event.value[1] == 1:
-                        selected_button = 0
-                    elif event.value[1] == -1:
-                        selected_button = 1
+        if controls.action_pressed("shoot"):
+            if selected_button == 0:
+                explosion_sound.play()
+                animate_screen()
+                show_menu = False
+                screen.fill(BLACK)
+                import gameplay
+                gameplay.main()
+                return
+            elif selected_button == 1:
+                pygame.quit()
+                sys.exit()
 
         screen.blit(mainmenu_img, (0, 0))
 
